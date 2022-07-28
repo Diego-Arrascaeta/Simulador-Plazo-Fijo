@@ -81,6 +81,40 @@ repetirCiclo();
 mostrarPlazos();
 
 const totalSuma = PlazosFijos.reduce((acc, el) => + acc + el.deposito, 0)
-alert ("Tu ganancia total con depósitos e intereses será de: $ " + totalSuma)
+alert ("Tu Saldo final con depósitos e intereses será de: $ " + totalSuma) 
+
+
+
+
+const titulo = (document.querySelector("h1").textContent = "Banco LAUCHISMO");
+
+const subTitulo = (document.querySelector(".text-white-50").textContent = "Entre la espada y la pared, siempre");
+
+const titulo2 = (document.querySelector("h2").textContent = "Somos los mas delincuentes del mercado");
+
+const descripcion = (document.querySelector(".lead").textContent = "Estamos para defondar tus ahorros y hacerte creer que ganarás dinero con nosotros");
+
+const enlace = document.querySelector(".navbar-brand");
+enlace.remove()
+
+let agregado = document.createElement("p");
+agregado.innerHTML = "<h5>Parrafo agregados</h5>";
+
+const encabezado = document.querySelector(".encabezado");
+console.log (encabezado.children)
+
+encabezado.insertBefore(agregado, encabezado[1]); 
+
+/* agrego array */
+let listaVacia = document.querySelector("#listaVacia");
+
+let otrosServicios = ["Dólares", "Bonos", "Caja de seguridad"];
+
+for (let servicio of otrosServicios) {
+    let listado = document.createElement("li");
+    listado.innerHTML = servicio;
+    listaVacia.appendChild(listado);
+    }
+
 
 
