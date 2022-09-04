@@ -1,120 +1,169 @@
-let precio = 0;
 
+let formulario = document.getElementById("formulario");
+let inversion = document.getElementById("inversion");
+let boton = document.getElementById("calcular");
+let contenedor = document.getElementById("contenedor");
+let rangoInversion
+
+let precio = 0;
 const intereses = [1.1, 1.2, 1.3, 1.4, 1.5]
 
-const PlazosFijos = [];
+
+let PlazosFijos = JSON.parse(localStorage.getItem("plazosFijos")) || []; 
+
 
 class plazoFijoUsuario {
-    constructor(monto, interes){
+    constructor(monto, interes) {
         this.monto = monto,
         this.interes = interes,
         this.deposito = this.monto * this.interes
     }
 }
 
-function pedirMonto() {
-    return parseFloat (prompt("SIMULADOR DE PLAZO FIJO: Ingresá el monto a depositar, hasta $1000 tu interés será del 10% anual, hasta $2000 tu interés será del 20% anual, hasta $3000 tu interés será del 30% anual, hasta $4000 tu interés será del 40% anual, y depósitos superiores a $5000 tu interés será del 50% anual. RECORDÁ QUE EL DEPÓSITO NO PUEDE SUPERAR LOS $10000"));
-}
+
+const crearTarjeta = () => {
+
+        inversionIngresada = parseInt(inversion.value)
+
+    if (inversionIngresada <= 1000) {
+        rangoInversion = ("Depositando ese monto tenés el 10% de interés anual, por lo tanto tu depósito se convertirá en " + "$" + inversionIngresada * intereses[0]);
+        PlazosFijos.push(new plazoFijoUsuario(inversionIngresada, intereses[0]));
+
+    } else if (inversionIngresada <= 2000) {
+        rangoInversion = ("Depositando ese monto tenés el 20% de interés anual, por lo tanto tu depósito se convertirá en " + "$" + inversionIngresada * intereses[1]);
+        PlazosFijos.push(new plazoFijoUsuario(inversionIngresada, intereses[1]));
+
+    } else if (inversionIngresada <= 3000) {
+        rangoInversion = ("Depositando ese monto tenés el 30% de interés anual, por lo tanto tu depósito se convertirá en " + "$" + inversionIngresada * intereses[2]);
+        PlazosFijos.push(new plazoFijoUsuario(inversionIngresada, intereses[2]));
+
+    } else if (inversionIngresada <= 4000) {
+        rangoInversion = ("Depositando ese monto tenés el 40% de interés anual, por lo tanto tu depósito se convertirá en " + "$" + inversionIngresada * intereses[3]);
+        PlazosFijos.push(new plazoFijoUsuario(inversionIngresada, intereses[3]));
+
+    } else {
+        rangoInversion = ("Depositando ese monto tenés el 50% de interés anual, por lo tanto tu depósito se convertirá en " + "$" + inversionIngresada * intereses[4]);
+        PlazosFijos.push(new plazoFijoUsuario(inversionIngresada, intereses[4]));
+    }
+
+
+    console.log (inversionIngresada?.a || "el interés no existe")
+
     
-function CalcularIntereses() {
-    precio = pedirMonto()
+    localStorage.setItem("plazosFijos", JSON.stringify(PlazosFijos));
 
-    while (!precio) {
-        alert ("No es un dato válido. Intentá de nuevo: ");
-        precio = pedirMonto();
-    }
+    contenedor.innerHTML = `<div class="card col-4 mx-1 p-3">
+                                <h3> Tu inversión es de ${inversionIngresada}.</h3>
+                                <p> ${rangoInversion}.</p>
+                            </div>`;
 
-    while (precio > 10000) {
-        alert ("No podés depositar mas de 10000. Intentá de nuevo: ");
-        precio = pedirMonto();
-    }
+    formulario.reset();
+
+}
+
+
+boton.addEventListener("click", (e) => {
+    e.preventDefault();    
+        crearTarjeta();
+   
+});
+
+
+let contenedorPlazos = document.getElementById("contenedorPlazos");
+let btnHistorial = document.getElementById("verHistorial");
+let totalizador = document.getElementById("totalizador");
+
+
+const verHistorial = () => {
+    contenedorPlazos.innerHTML = "";
+    PlazosFijos.forEach((plazo) => {
+        contenedorPlazos.innerHTML += `<li> Tenés un plazo de ${plazo.monto}, que se convertiran en ${plazo.deposito}.<li>`;
+    })
+};
+
+
+const mostrarTotal = () => {
+    let inversionTotal = PlazosFijos.reduce((acc, plazo) => acc + plazo.monto, 0);
+    let depositoTotal = PlazosFijos.reduce((acc, plazo) => acc + plazo.deposito, 0);
+    let gananciaTotal = depositoTotal - inversionTotal;
+
+    console.log(PlazosFijos);
+    totalizador.innerHTML = `El total invertido es de <strong>${inversionTotal}</strong>, recibiendo un total de <strong>${depositoTotal}</strong>, para una ganancia de <strong>${gananciaTotal}</strong>.`
+};
+
+
+btnHistorial.addEventListener("click", () => {
+    verHistorial();
+    mostrarTotal();
+    5
+})
+
+
+function borrarHistorial() {
+
+    localStorage.removeItem("plazosFijos");
+    PlazosFijos.length = 0;
+}
+
+const btnBorrarHistorial = document.getElementById("borrarHistorial");
+btnBorrarHistorial.addEventListener('click', (event) => {
+
+    event.preventDefault();
+    borrarHistorial();
+    verHistorial();
+    mostrarTotal();
     
-    if (precio <= 1000) {
-        alert ("Depositando ese monto tenés el 10% de interés anual");
-        alert ("Tu depósito se convertirá en" + "$" + precio * intereses [0]);        
-        PlazosFijos.push(new plazoFijoUsuario(precio, intereses[0]));
-    } else if (precio <= 2000) {
-        alert ("Depositando ese monto tenés el 20% de interés anual");
-        alert ("Tu depósito se convertirá en" + "$" + precio * intereses [1])
-        PlazosFijos.push(new plazoFijoUsuario(precio, intereses[1]));
-    } else if (precio <= 3000) {
-        alert ("Depositando ese monto tenés el 30% de interés anual");
-        alert ("Tu depósito se convertirá en" + "$" + precio * intereses [2])
-        PlazosFijos.push(new plazoFijoUsuario(precio, intereses[2]));
-    } else if (precio <= 4000) {
-        alert ("Depositando ese monto tenés el 40% de interés anual");
-        alert ("Tu depósito se convertirá en" + "$" + precio * intereses [3])
-        PlazosFijos.push(new plazoFijoUsuario(precio, intereses[3]));
-    } else { alert ("Depositando ese monto tenés el 50% de interés anual"); 
-        alert ("Tu depósito se convertirá en" + "$" + precio * intereses [4]);
-    PlazosFijos.push(new plazoFijoUsuario(precio, intereses[4]));
-    }
 
+    contenedor.innerHTML = `<div class="card col-4 mx-1 p-3">
+                                <h3> Gracias por utilizar nuestro simulador </h3>
+                                <p>Esperamos tu inversión!!</p>
+                            </div>`;
+
+    formulario.reset();
+
+    Swal.fire({
+        title: 'VAMOOOO METÉLE PESOS ARGENTOS!!!!',
+        text: 'Que nosotrooo nos quemamo los verdeeee',
+        imageUrl: 'http://c.files.bbci.co.uk/6AD9/production/_103735372_gettyimages-175494583.jpg',
+        imageWidth: 400,
+        imageHeight: 200,
+        imageAlt: 'Dolar quemado',
+      })
+    
+});
+
+
+const cotizacionDolar = () => {
+    fetch('https://api.bluelytics.com.ar/v2/latest')
+        .then((response) => response.json())
+        .then(informacion => {
+            console.log(informacion);
+            let acumulador = ``;
+            for (const monedas in informacion) {
+                if (monedas === "last_update") {
+                    continue
+                }
+                acumulador += `<div class="card">
+                  <h4>${monedas}</h4>
+                  <h6>Precio Venta: ${informacion[monedas].value_sell}</h6>
+                  <h6>Precio Compra: ${informacion[monedas].value_buy}</h6>
+                  </div>`
+          }
+          
+          document.getElementById('cotizacionDolar').innerHTML = acumulador;
+       })       
 }
 
-function repetirCiclo() {
-    let respuesta;
-    do {
-        respuesta = prompt("Querés agregar otro plazo fijo? Respondé sólo si o no") .toLowerCase();
-        if(respuesta === "si") {
-            CalcularIntereses();
-            repetirCiclo();
-        } else if (respuesta === "no") {
-            alert ("Perfecto, no agregaremos mas plazos fijos");
-        } else {
-            alert ("No pusiste un si o un no. Intentá nuevamente: ");
-        }
-    } while (respuesta !== "si" && respuesta !== "no");
-}
-
-function mostrarPlazos() {
-    alert ("Estos son tus plazos fijos: ");
-    mensaje = "";
-    for(const plazoFijo of PlazosFijos) {
-        mensaje += "Tenés un plazo fijo de " + plazoFijo.monto + ", que se convertirán en " + plazoFijo.deposito + ".\n";
-    }
-    alert(mensaje);
-}
-
-CalcularIntereses();
-repetirCiclo();
-mostrarPlazos();
-
-const totalSuma = PlazosFijos.reduce((acc, el) => + acc + el.deposito, 0)
-alert ("Tu Saldo final con depósitos e intereses será de: $ " + totalSuma) 
-
+cotizacionDolar();
 
 
 
 const titulo = (document.querySelector("h1").textContent = "Banco LAUCHISMO");
-
 const subTitulo = (document.querySelector(".text-white-50").textContent = "Entre la espada y la pared, siempre");
-
 const titulo2 = (document.querySelector("h2").textContent = "Somos los mas delincuentes del mercado");
-
 const descripcion = (document.querySelector(".lead").textContent = "Estamos para defondar tus ahorros y hacerte creer que ganarás dinero con nosotros");
 
 const enlace = document.querySelector(".navbar-brand");
 enlace.remove()
-
-let agregado = document.createElement("p");
-agregado.innerHTML = "<h5>Parrafo agregados</h5>";
-
-const encabezado = document.querySelector(".encabezado");
-console.log (encabezado.children)
-
-encabezado.insertBefore(agregado, encabezado[1]); 
-
-/* agrego array */
-let listaVacia = document.querySelector("#listaVacia");
-
-let otrosServicios = ["Dólares", "Bonos", "Caja de seguridad"];
-
-for (let servicio of otrosServicios) {
-    let listado = document.createElement("li");
-    listado.innerHTML = servicio;
-    listaVacia.appendChild(listado);
-    }
-
 
 
